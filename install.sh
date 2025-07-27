@@ -95,7 +95,7 @@ function _elastica_detect_compiler() {
 		fi
 	done
 	# Check if not set, else set it
-	if [ -z "${_CXX_}" ] && g++ --version; then
+	if [ -z "${_CXX_}" ] && g++ --version >/dev/null 2>&1; then
 		_CXX_="g++"
 	fi
 }
@@ -106,6 +106,9 @@ DOWNLOAD_PATH=${DOWNLOAD_PATH:-"${HOME}/Desktop/third_party"}
 INSTALL_PATH=${INSTALL_PATH:-"${HOME}/Desktop/third_party_installed"}
 GLOBAL_CXX_COMPILER=${GLOBAL_CXX_COMPILER:-"${_CXX_}"}
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+
+echo "CXX_COMPILER: ${GLOBAL_CXX_COMPILER}"
+${GLOBAL_CXX_COMPILER} --version
 
 mkdir -p "${DOWNLOAD_PATH}" && cd "${DOWNLOAD_PATH}" || exit
 
@@ -147,30 +150,30 @@ fi
 touch ~/.localrc
 chmod u+rwx ~/.localrc
 
-if [ ! -v BLAZE_ROOT ]; then
+if [ -z "${BLAZE_ROOT+x}" ]; then
 	echo "export BLAZE_ROOT='${INSTALL_PATH}'" >>~/.localrc
 fi
-if [ ! -v BLAZE_TENSOR_ROOT ]; then
+if [ -z "${BLAZE_TENSOR_ROOT+x}" ]; then
 	echo "export BLAZE_TENSOR_ROOT='${INSTALL_PATH}'" >>~/.localrc
 fi
-if [ ! -v BRIGAND_ROOT ]; then
+if [ -z "${BRIGAND_ROOT+x}" ]; then
 	echo "export BRIGAND_ROOT='${INSTALL_PATH}'" >>~/.localrc
 fi
-if [ ! -v cxxopts_DIR ]; then
+if [ -z "${cxxopts_DIR+x}" ]; then
 	echo "export cxxopts_DIR='${INSTALL_PATH}'" >>~/.localrc
 fi
 # This will add to previously installed quicksetup profiles as well
-if [ ! -v YamlCpp_ROOT ]; then
+if [ -z "${YamlCpp_ROOT+x}" ]; then
 	echo "export YamlCpp_ROOT='${INSTALL_PATH}'" >>~/.localrc
 fi
 # We have a FindHighFive.cmake that is case-insensitive
-if [ ! -v HighFive_ROOT ]; then
+if [ -z "${HighFive_ROOT+x}" ]; then
 	echo "export HighFive_ROOT='${INSTALL_PATH}'" >>~/.localrc
 fi
-if [ ! -v TBB_ROOT ]; then
+if [ -z "${TBB_ROOT+x}" ]; then
 	echo "export TBB_ROOT='${INSTALL_PATH}'" >>~/.localrc
 fi
-if [ ! -v SPLINE_ROOT ]; then
+if [ -z "${SPLINE_ROOT+x}" ]; then
 	echo "export SPLINE_ROOT='${INSTALL_PATH}'" >>~/.localrc
 fi
 
