@@ -1,10 +1,10 @@
 #!/usr/bin/env sh
 
-# CXXOPTS automatically installs in the CXXOPTS subdirectory
-CXXOPTS_BUILD_DIR="build"
-CXXOPTS_INSTALL_PREFIX=${1:-"${HOME}/Desktop/third_party_installed"}
+# SPLINE automatically installs in the brigand subdirectory
+SPLINE_BUILD_DIR="build"
+SPLINE_INSTALL_PREFIX=${1:-"${HOME}/Desktop/third_party_installed"}
 
-mkdir -p "${CXXOPTS_INSTALL_PREFIX}"
+mkdir -p "${SPLINE_INSTALL_PREFIX}"
 
 function elastica_detect_compiler() {
 	# check gcc version starting from 9 on to 4
@@ -28,18 +28,18 @@ _CXX_COMPILER=${2:-"${_CXX_}"}
 _PARALLEL_ARG=${3:-"1"}
 
 # Requires >3.14
-cmake -B "${CXXOPTS_BUILD_DIR}" \
+# Spline does not install correctly if install prefix is not passed to the generation step.
+cmake -B "${SPLINE_BUILD_DIR}" \
 	-DCMAKE_BUILD_TYPE=Release \
 	-DCMAKE_CXX_COMPILER="${_CXX_COMPILER}" \
-	-DCXXOPTS_BUILD_EXAMPLES=OFF \
-	-DCXXOPTS_BUILD_TESTS=OFF \
+	-DCMAKE_INSTALL_PREFIX="${SPLINE_INSTALL_PREFIX}" \
 	-S .
-cmake --build "${CXXOPTS_BUILD_DIR}" --parallel "${_PARALLEL_ARG}"
-cmake --install "${CXXOPTS_BUILD_DIR}" --prefix "${CXXOPTS_INSTALL_PREFIX}"
+cmake --build "${SPLINE_BUILD_DIR}" --parallel "${_PARALLEL_ARG}"
+cmake --install "${SPLINE_BUILD_DIR}" --prefix "${SPLINE_INSTALL_PREFIX}"
 
 unset _PARALLEL_ARG
 unset _CXX_COMPILER
 unset _CXX_
 unset -f elastica_detect_compiler
-unset CXXOPTS_BUILD_DIR
-unset CXXOPTS_INSTALL_PREFIX
+unset SPLINE_BUILD_DIR
+unset SPLINE_INSTALL_PREFIX

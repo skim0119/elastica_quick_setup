@@ -1,14 +1,13 @@
 #!/usr/bin/env sh
 
-# CXXOPTS automatically installs in the CXXOPTS subdirectory
-CXXOPTS_BUILD_DIR="build"
-CXXOPTS_INSTALL_PREFIX=${1:-"${HOME}/Desktop/third_party_installed"}
-
-mkdir -p "${CXXOPTS_INSTALL_PREFIX}"
+# TBB automatically installs in the TBB subdirectory
+TBB_BUILD_DIR="build"
+TBB_INSTALL_PREFIX=${1:-"${HOME}/Desktop/third_party_installed"}
+mkdir -p "${TBB_INSTALL_PREFIX}"
 
 function elastica_detect_compiler() {
 	# check gcc version starting from 9 on to 4
-	local version_array=($(seq 11 -1 4))
+	local version_array=("$(seq 11 -1 4)")
 	local CXX_ver_arr=("${version_array[@]/#/g++-}")
 	local CC_ver_arr=("${version_array[@]/#/g++-}")
 	# Try and detect GNU g++ from the shell, if not use default CC
@@ -27,19 +26,22 @@ elastica_detect_compiler
 _CXX_COMPILER=${2:-"${_CXX_}"}
 _PARALLEL_ARG=${3:-"1"}
 
-# Requires >3.14
-cmake -B "${CXXOPTS_BUILD_DIR}" \
+# >3.14
+# -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR}
+# TBB static build is discouraged for some reason
+cmake -B "${TBB_BUILD_DIR}" \
 	-DCMAKE_BUILD_TYPE=Release \
 	-DCMAKE_CXX_COMPILER="${_CXX_COMPILER}" \
-	-DCXXOPTS_BUILD_EXAMPLES=OFF \
-	-DCXXOPTS_BUILD_TESTS=OFF \
+	-DTBB_TEST=OFF \
+	-DTBB4PY_BUILD=OFF \
+	-DBUILD_SHARED_LIBS=ON \
 	-S .
-cmake --build "${CXXOPTS_BUILD_DIR}" --parallel "${_PARALLEL_ARG}"
-cmake --install "${CXXOPTS_BUILD_DIR}" --prefix "${CXXOPTS_INSTALL_PREFIX}"
+cmake --build "${TBB_BUILD_DIR}" --parallel "${_PARALLEL_ARG}"
+cmake --install "${TBB_BUILD_DIR}" --prefix "${TBB_INSTALL_PREFIX}"
 
 unset _PARALLEL_ARG
 unset _CXX_COMPILER
 unset _CXX_
 unset -f elastica_detect_compiler
-unset CXXOPTS_BUILD_DIR
-unset CXXOPTS_INSTALL_PREFIX
+unset TBB_BUILD_DIR
+unset TBB_INSTALL_PREFIX
