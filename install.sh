@@ -105,6 +105,20 @@ _elastica_detect_compiler
 DOWNLOAD_PATH=${DOWNLOAD_PATH:-"${HOME}/Desktop/third_party"}
 INSTALL_PATH=${INSTALL_PATH:-"${HOME}/Desktop/third_party_installed"}
 GLOBAL_CXX_COMPILER=${GLOBAL_CXX_COMPILER:-"${_CXX_}"}
+
+# Validate compiler exists and works
+if [ -z "${GLOBAL_CXX_COMPILER}" ]; then
+	fail "No C++ compiler found. Please install a C++ compiler or specify one with -c"
+fi
+
+if ! command -v "${GLOBAL_CXX_COMPILER}" >/dev/null 2>&1; then
+	fail "Compiler '${GLOBAL_CXX_COMPILER}' not found in PATH"
+fi
+
+if ! "${GLOBAL_CXX_COMPILER}" --version >/dev/null 2>&1; then
+	fail "Compiler '${GLOBAL_CXX_COMPILER}' is not working properly"
+fi
+
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 
 echo "CXX_COMPILER: ${GLOBAL_CXX_COMPILER}"
@@ -116,7 +130,6 @@ function setup_library() {
 	local name=$1
 	local repo=$2
 	local script_name="${3:-"build_${name}"}.sh"
-	local detection_script_name="elastica_detect_compiler.sh"
 
 	echo "Building ${name}"
 	local repo_path="${DOWNLOAD_PATH}/${name}/"
@@ -129,8 +142,8 @@ function setup_library() {
 	cp "${SCRIPT_DIR}/detail/${script_name}" "${repo_path}" || fail "Could not copy script"
 	# Copy all patch files
 	cp "${SCRIPT_DIR}"/detail/*.patch "${repo_path}" || fail "Could not copy patches"
-	cp "${SCRIPT_DIR}/detail/${detection_script_name}" "${repo_path}" && cd "${repo_path}" || exit
-	source "${script_name}" "${INSTALL_PATH}" "${GLOBAL_CXX_COMPILER}" "${PARALLEL_ARG}" || fail "Could not build ${name}"
+	cd "${repo_path}" || exit
+	bash "${script_name}" "${INSTALL_PATH}" "${GLOBAL_CXX_COMPILER}" "${PARALLEL_ARG}" || fail "Could not build ${name}"
 }
 
 if [ "$INSTALL_DEFAULT" == true ]; then
