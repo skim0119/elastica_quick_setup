@@ -155,7 +155,7 @@ if [ "$INSTALL_DEFAULT" == true ]; then
 fi
 
 if [ "$INSTALL_OPTIONAL" == true ]; then
-	setup_library "HighFive" "https://github.com/BlueBrain/HighFive"
+	setup_library "HighFive" "https://github.com/highfive-devs/HighFive"
 	setup_library "tbb" "https://github.com/oneapi-src/oneTBB.git"
 	setup_library "spline" "https://github.com/tp5uiuc/spline.git"
 fi
